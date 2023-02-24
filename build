@@ -1,0 +1,4 @@
+#!/bin/sh
+
+docker build -t publiocavalcante/php81 .
+docker push publiocavalcante/php81
