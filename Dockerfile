@@ -25,6 +25,7 @@ RUN apk add --no-cache php81-fpm php81-ctype php81-curl php81-dom php81-fileinfo
     && mkdir -p /var/www/html && chown www-data:www-data /var/www/html
 
 # Configuring PHP
+COPY php.ini-production /etc/php81/php.ini
 COPY zz-custom.conf /etc/php81/php-fpm.d/
 
 # Ignoring the vrification of certificate
