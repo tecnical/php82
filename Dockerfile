@@ -2,6 +2,11 @@
 # Imagem PHP-8.1 baseada na imagem base alpine instalando todo o PHP do zero
 #
 FROM alpine:3.17.2
+
+ARG UID=1000
+ARG GID=1000
+ARG USER=suporte
+
 # Essentials
 RUN apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
     zip unzip curl git supervisor
@@ -19,10 +24,11 @@ RUN apk add --no-cache php81-fpm php81-ctype php81-curl php81-dom php81-fileinfo
     ln -s /usr/sbin/php-fpm81 /usr/sbin/php-fpm  && \
     # ln -s /usr/bin/php81 /usr/bin/php
     set -x && \
-    (delgroup www-data || true) \
-    && addgroup -g 82 -S www-data \
-    && adduser -u 82 -D -S -G www-data www-data \
-    && mkdir -p /var/www/html && chown www-data:www-data /var/www/html
+    (delgroup "${USER}" || true) \
+    && addgroup -g "${GID}" -S "${USER}" \
+    && adduser -u "${UID}" -D -S -G "${USER}" "${USER}" \
+    && mkdir -p /var/www/html && chown "${USER}":"${USER}" /var/www/html
+
 
 # Configuring PHP
 COPY php.ini-production /etc/php81/php.ini
@@ -45,6 +51,9 @@ RUN mkdir -p /run/php/
 RUN touch /run/php/php81-fpm.pid
 
 COPY entrypoint.sh /usr/local/bin/
+
+# Switch to user
+USER "${UID}":"${GID}"
 
 WORKDIR /var/www/html
 
