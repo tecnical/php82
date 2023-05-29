@@ -1,4 +1,12 @@
 #!/bin/sh
 
-docker build -t publiocavalcante/php81 .
-docker push publiocavalcante/php81
+export UID=$(id -u)
+export GID=$(id -g)
+export USER=$(whoami)
+
+IMAGE="publiocavalcante/php81"
+docker build --build-arg UID="${UID}" \
+      --build-arg GID="${GID}" \
+      -t $IMAGE .
+
+docker push $IMAGE

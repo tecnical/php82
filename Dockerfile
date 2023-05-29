@@ -9,7 +9,7 @@ ARG USER=suporte
 
 # Essentials
 RUN apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    zip unzip curl git supervisor
+    zip unzip curl git supervisor ca-certificates
 
 # Installing bash
 RUN apk add bash \
@@ -33,9 +33,6 @@ RUN apk add --no-cache php81-fpm php81-ctype php81-curl php81-dom php81-fileinfo
 # Configuring PHP
 COPY php.ini-production /etc/php81/php.ini
 COPY zz-custom.conf /etc/php81/php-fpm.d/
-
-# Ignoring the vrification of certificate
-RUN echo "TLS_REQCERT never" >> /etc/openldap/ldap.conf
 
 # Installing composer
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php
