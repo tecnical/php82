@@ -4,7 +4,7 @@ export UID=$(id -u)
 export GID=$(id -g)
 export USER=$(whoami)
 
-IMAGE="publiocavalcante/php81"
+IMAGE="publiocavalcante/php82"
 docker build --build-arg UID="${UID}" \
       --build-arg GID="${GID}" \
       -t $IMAGE .

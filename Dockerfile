@@ -1,7 +1,7 @@
 ###############################################################################
-# Imagem PHP-8.1 baseada na imagem base alpine instalando todo o PHP do zero
+# Imagem PHP-8.2 baseada na imagem base alpine instalando todo o PHP do zero
 #
-FROM alpine:3.17.2
+FROM alpine:3.18.5
 
 ARG UID=1000
 ARG GID=1000
@@ -9,30 +9,28 @@ ARG USER=suporte
 
 # Essentials
 RUN apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    zip unzip curl git supervisor ca-certificates
+    zip unzip curl git supervisor openssl ca-certificates
 
 # Installing bash
 RUN apk add bash \
     && sed -i 's/bin\/ash/bin\/bash/g' /etc/passwd
 
 # Installing PHP
-RUN apk add --no-cache php81-fpm php81-ctype php81-curl php81-dom php81-fileinfo php81-ftp php81-iconv php81-json \
-    php81-ldap php81-mbstring php81-mysqlnd php81-openssl php81-pdo php81-pdo_sqlite php81-pear \
-    php81-phar php81-posix php81-session php81-sodium php81-simplexml php81-sqlite3 php81-tokenizer php81-soap \
-    php81-xml php81-xmlreader php81-xmlwriter php81-zlib php81-zip php81-bz2 php81-intl php81-gd \
-    php81-imap php81-mysqli php81-bcmath php81-pdo_mysql php81-opcache ca-certificates && \
-    ln -s /usr/sbin/php-fpm81 /usr/sbin/php-fpm  && \
-    # ln -s /usr/bin/php81 /usr/bin/php
+RUN apk add --no-cache php82-fpm php82-ctype php82-curl php82-dom php82-fileinfo php82-ftp php82-iconv php82-json \
+    php82-ldap php82-mbstring php82-mysqlnd php82-openssl php82-pdo php82-pdo_sqlite php82-pear \
+    php82-phar php82-posix php82-session php82-sodium php82-simplexml php82-sqlite3 php82-tokenizer php82-soap \
+    php82-xml php82-xmlreader php82-xmlwriter php82-zlib php82-zip php82-bz2 php82-intl php82-gd \
+    php82-imap php82-mysqli php82-bcmath php82-pdo_mysql php82-opcache ca-certificates && \
+    ln -s /usr/sbin/php-fpm82 /usr/sbin/php-fpm && \
+    ln -s /usr/bin/php82 /usr/bin/php && \
     set -x && \
     (delgroup "${USER}" || true) \
     && addgroup -g "${GID}" -S "${USER}" \
     && adduser -u "${UID}" -D -S -G "${USER}" "${USER}" \
     && mkdir -p /var/www/html && chown "${USER}":"${USER}" /var/www/html
 
-
-# Configuring PHP
-COPY php.ini-production /etc/php81/php.ini
-COPY zz-custom.conf /etc/php81/php-fpm.d/
+COPY php.ini-production /etc/php82/php.ini
+COPY zz-custom.conf /etc/php82/php-fpm.d/
 
 # Installing composer
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php
@@ -43,9 +41,17 @@ RUN rm -rf composer-setup.php
 RUN mkdir -p /etc/supervisor.d/
 COPY supervisord.ini /etc/supervisor.d/supervisord.ini
 
+# Configurar o Openssl
+RUN mkdir -p /usr/local/ssl/certs
+RUN /usr/bin/c_rehash
+
+RUN mkdir /etc/ldap \
+    && echo "TLS_REQCERT never" >> /etc/openldap/ldap.conf \
+    && echo "TLS_REQCERT never" >> /etc/ldap/ldap.conf
+
 # Configure PHP
 RUN mkdir -p /run/php/
-RUN touch /run/php/php81-fpm.pid
+RUN touch /run/php/php82-fpm.pid
 
 COPY entrypoint.sh /usr/local/bin/
 
