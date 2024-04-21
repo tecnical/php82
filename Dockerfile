@@ -1,7 +1,7 @@
 ###############################################################################
 # Imagem PHP-8.2 baseada na imagem base alpine instalando todo o PHP do zero
 #
-FROM alpine:3.18.5
+FROM alpine:3.19.1
 
 ARG UID=1000
 ARG GID=1000
@@ -16,13 +16,18 @@ RUN apk add bash \
     && sed -i 's/bin\/ash/bin\/bash/g' /etc/passwd
 
 # Installing PHP
-RUN apk add --no-cache php82-fpm php82-ctype php82-curl php82-dom php82-fileinfo php82-ftp php82-iconv php82-json \
-    php82-ldap php82-mbstring php82-mysqlnd php82-openssl php82-pdo php82-pdo_sqlite php82-pear \
-    php82-phar php82-posix php82-session php82-sodium php82-simplexml php82-sqlite3 php82-tokenizer php82-soap \
-    php82-xml php82-xmlreader php82-xmlwriter php82-zlib php82-zip php82-bz2 php82-intl php82-gd \
-    php82-imap php82-mysqli php82-bcmath php82-pdo_mysql php82-opcache ca-certificates && \
+RUN apk add --no-cache php82-fpm php82-ctype php82-curl php82-dom \
+    php82-fileinfo php82-ftp php82-iconv php82-json php82-ldap php82-mbstring \
+    php82-mysqlnd php82-openssl php82-pdo php82-pdo_sqlite php82-pear \
+    php82-phar php82-posix php82-session php82-sodium php82-simplexml \
+    php82-sqlite3 php82-tokenizer php82-soap php82-xml php82-xmlreader \
+    php82-xmlwriter php82-zlib php82-zip php82-bz2 php82-intl php82-gd \
+    php82-imap php82-mysqli php82-bcmath php82-pdo_mysql php82-opcache \
+    php82-pdo_sqlite ca-certificates
+
+RUN \
     ln -s /usr/sbin/php-fpm82 /usr/sbin/php-fpm && \
-    ln -s /usr/bin/php82 /usr/bin/php && \
+#    ln -s /usr/bin/php82 /usr/bin/php && \
     set -x && \
     (delgroup "${USER}" || true) \
     && addgroup -g "${GID}" -S "${USER}" \
@@ -64,4 +69,5 @@ STOPSIGNAL SIGQUIT
 
 EXPOSE 9000
 
-CMD ["supervisord", "-c", "/etc/supervisor.d/supervisord.ini"]
+#CMD ["supervisord", "-c", "/etc/supervisor.d/supervisord.ini"]
+CMD ["bash"]
