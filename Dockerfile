@@ -9,10 +9,12 @@ ARG USER=suporte
 
 # Essentials
 RUN apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    zip unzip curl git supervisor openssl ca-certificates
+    zip unzip curl git supervisor openssl ca-certificates \
+    && apk cache clean \
 
 # Installing bash
 RUN apk add bash \
+    && apk cache clean \
     && sed -i 's/bin\/ash/bin\/bash/g' /etc/passwd
 
 # Installing PHP
@@ -23,10 +25,10 @@ RUN apk add --no-cache php82-fpm php82-ctype php82-curl php82-dom \
     php82-sqlite3 php82-tokenizer php82-soap php82-xml php82-xmlreader \
     php82-xmlwriter php82-zlib php82-zip php82-bz2 php82-intl php82-gd \
     php82-imap php82-mysqli php82-bcmath php82-pdo_mysql php82-opcache \
-    php82-pdo_sqlite ca-certificates && \
-    ln -s /usr/sbin/php-fpm82 /usr/sbin/php-fpm && \
-#    ln -s /usr/bin/php82 /usr/bin/php && \
-    set -x && \
+    php82-pdo_sqlite ca-certificates \
+    && apk cache clean \
+    && ln -s /usr/sbin/php-fpm82 /usr/sbin/php-fpm \
+    && set -x && \
     (delgroup "${USER}" || true) \
     && addgroup -g "${GID}" -S "${USER}" \
     && adduser -u "${UID}" -D -S -G "${USER}" "${USER}" \
