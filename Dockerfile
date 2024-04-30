@@ -9,11 +9,7 @@ ARG USER=suporte
 
 # Essentials
 RUN apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    zip unzip curl git supervisor openssl ca-certificates \
-    && apk cache clean \
-
-# Installing bash
-RUN apk add bash \
+    zip unzip curl git supervisor openssl ca-certificates bash \
     && apk cache clean \
     && sed -i 's/bin\/ash/bin\/bash/g' /etc/passwd
 
