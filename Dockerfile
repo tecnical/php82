@@ -1,5 +1,5 @@
 ###############################################################################
-# Imagem PHP-8.2 baseada na imagem base alpine instalando todo o PHP do zero
+# Imagem PHP-8.2 baseada na imagem base alpine instalando o PHP do zero
 #
 FROM alpine:3.19.1
 
@@ -23,9 +23,7 @@ RUN apk add --no-cache php82-fpm php82-ctype php82-curl php82-dom \
     php82-sqlite3 php82-tokenizer php82-soap php82-xml php82-xmlreader \
     php82-xmlwriter php82-zlib php82-zip php82-bz2 php82-intl php82-gd \
     php82-imap php82-mysqli php82-bcmath php82-pdo_mysql php82-opcache \
-    php82-pdo_sqlite ca-certificates
-
-RUN \
+    php82-pdo_sqlite ca-certificates && \
     ln -s /usr/sbin/php-fpm82 /usr/sbin/php-fpm && \
 #    ln -s /usr/bin/php82 /usr/bin/php && \
     set -x && \
@@ -69,5 +67,5 @@ STOPSIGNAL SIGQUIT
 
 EXPOSE 9000
 
-#CMD ["supervisord", "-c", "/etc/supervisor.d/supervisord.ini"]
-CMD ["bash"]
+CMD ["supervisord", "-c", "/etc/supervisor.d/supervisord.ini"]
+#CMD ["bash"]
